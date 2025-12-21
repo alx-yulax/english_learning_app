@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 
 from app.core.config import get_settings
+from app.web.routes.webapp import webapp_bp
 
 
 def create_app() -> Flask:
@@ -8,6 +9,8 @@ def create_app() -> Flask:
 
     app = Flask(__name__)
     app.config["SECRET_KEY"] = settings.SECRET_KEY
+
+    app.register_blueprint(webapp_bp)
 
     @app.route("/health", methods=["GET"])
     def health():
