@@ -1,0 +1,8 @@
+aiogram==3.*
+flask==3.*
+sqlalchemy==2.*
+python-dotenv
+pydantic
+gtts
+httpx
+itsdangerous
