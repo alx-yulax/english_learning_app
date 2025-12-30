@@ -24,20 +24,20 @@ def get_telegram_user_from_header():
     return data["user"]
 
 
-@webapp_bp.route("/words", methods=["GET"])
+@webapp_bp.route("/webapp/words", methods=["GET"])
 def webapp_words():
+    init_data = request.headers.get("X-Telegram-InitData")
+
+    if not init_data:
+        return jsonify({"error": "initData is required"}), 403
+
     try:
-        tg_user = get_telegram_user_from_header()
-    except ValueError as e:
+        data = verify_telegram_webapp(init_data)
+        telegram_id = data["user"]["id"]
+    except Exception as e:
         return jsonify({"error": str(e)}), 403
 
-    user = UsersService.get_or_create_user(
-        telegram_id=tg_user["id"],
-        username=tg_user.get("username"),
-        first_name=tg_user.get("first_name"),
-    )
-
-    words = WordsService.list_words(user.id)
+    words = WordsService.list_words_by_telegram_id(telegram_id)
 
     return jsonify([
         {
