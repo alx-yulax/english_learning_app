@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.database.models import Word
+from app.database.models import Word, User
 from app.database.session import get_session
 
 
@@ -34,3 +34,21 @@ class WordsService:
         with get_session() as session:
             stmt = select(Word).where(Word.user_id == user_id).order_by(Word.id)
             return list(session.scalars(stmt))
+
+    @staticmethod
+    def list_words_by_telegram_id(telegram_id: int) -> list[Word]:
+        with get_session() as session:
+            user = (
+                session.query(User)
+                .filter(User.telegram_id == telegram_id)
+                .first()
+            )
+            if not user:
+                return []
+
+            return (
+                session.query(Word)
+                .filter(Word.user_id == user.id)
+                .order_by(Word.id)
+                .all()
+            )
