@@ -1,24 +1,49 @@
 from flask import Blueprint, request, jsonify, render_template
+
 from app.core.security import verify_telegram_webapp
+from app.services.words import WordsService
+from app.services.users import UsersService
 
 webapp_bp = Blueprint("webapp", __name__)
 
+
 @webapp_bp.route("/", methods=["GET"])
 def webapp_index():
+    """
+    Entry point for Telegram WebApp
+    """
     return render_template("webapp/index.html")
 
 
-@webapp_bp.route("/auth", methods=["POST"])
-def webapp_auth():
-    payload = request.json or {}
-    init_data = payload.get("initData")
-
+def get_telegram_user_from_header():
+    init_data = request.headers.get("X-Telegram-InitData")
     if not init_data:
-        return jsonify({"error": "initData is required"}), 400
+        raise ValueError("initData is required")
 
+    data = verify_telegram_webapp(init_data)
+    return data["user"]
+
+
+@webapp_bp.route("/words", methods=["GET"])
+def webapp_words():
     try:
-        data = verify_telegram_webapp(init_data)
+        tg_user = get_telegram_user_from_header()
     except ValueError as e:
         return jsonify({"error": str(e)}), 403
 
-    return jsonify(status="ok", user=data.get("user"))
+    user = UsersService.get_or_create_user(
+        telegram_id=tg_user["id"],
+        username=tg_user.get("username"),
+        first_name=tg_user.get("first_name"),
+    )
+
+    words = WordsService.list_words(user.id)
+
+    return jsonify([
+        {
+            "id": w.id,
+            "english": w.english,
+            "translation": w.translation,
+        }
+        for w in words
+    ])
