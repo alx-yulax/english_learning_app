@@ -1,10 +1,16 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import InlineKeyboardMarkup, WebAppInfo, InlineKeyboardButton
 
 
-def main_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="📚 Учить слова")]
-        ],
-        resize_keyboard=True,
+def main_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="OPEN WEBAPP",
+                    web_app=WebAppInfo(
+                        url="https://english-web-app.yulax.ru/webapp/"
+                    ),
+                )
+            ]
+        ]
     )
