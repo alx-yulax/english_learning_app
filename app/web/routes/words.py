@@ -6,7 +6,7 @@ from app.services.words import WordsService
 words_bp = Blueprint("words", __name__)
 
 
-@words_bp.route("/webapp/words", methods=["GET"])
+@words_bp.route("/words", methods=["GET"])
 def get_words():
     """
     Возвращает список слов текущего пользователя.

@@ -13,11 +13,4 @@ def create_app() -> Flask:
     app.register_blueprint(webapp_bp)
     app.register_blueprint(words_bp)
 
-    @app.route("/health", methods=["GET"])
-    def health():
-        return jsonify(
-            status="ok",
-            env=settings.ENV,
-        )
-
     return app

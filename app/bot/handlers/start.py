@@ -1,14 +1,12 @@
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import (
-    Message,
-    KeyboardButton,
-    ReplyKeyboardMarkup,
-    WebAppInfo,
+    Message
 )
 
 from app.core.config import get_settings
 from app.services.users import UsersService
+from app.bot.keyboards.main import main_keyboard
 
 router = Router()
 settings = get_settings()
@@ -27,22 +25,8 @@ async def start_handler(message: Message) -> None:
         first_name=message.from_user.first_name,
     )
 
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                KeyboardButton(
-                    text="📚 Учить слова",
-                    web_app=WebAppInfo(
-                        url=f"{settings.WEBAPP_BASE_URL}/webapp/"
-                    ),
-                )
-            ]
-        ],
-        resize_keyboard=True,
-    )
-
     await message.answer(
         f"Привет, {user.first_name or 'друг'} 👋\n"
-        "Готов учить английские слова?",
-        reply_markup=keyboard,
+        "Готов учить английские слова1?",
+        reply_markup=main_keyboard(),
     )
