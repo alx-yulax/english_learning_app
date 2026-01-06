@@ -1,9 +1,12 @@
 from flask import Blueprint, request, jsonify, render_template
 
-from app.bot.handlers.start import settings
+from app.core.config import get_settings
 from app.core.security import verify_telegram_webapp
 
-webapp_bp = Blueprint("webapp", __name__)
+settings = get_settings()
+
+webapp_bp = Blueprint("webapp", __name__, url_prefix="/webapp")
+
 
 @webapp_bp.route("/", methods=["GET"])
 def webapp_index():

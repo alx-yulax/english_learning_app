@@ -1,24 +1,21 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 
-const initData = tg.initData;
-
 async function auth() {
     const response = await fetch("/webapp/auth", {
         method: "POST",
         headers: {
-            "X-Telegram-InitData": window.Telegram.WebApp.initData
-        }
+            "X-Telegram-InitData": tg.initData,
+        },
     });
 
     const data = await response.json();
 
+    const statusEl = document.getElementById("status");
     if (response.ok) {
-        document.getElementById("status").innerText =
-            "Hello, " + data.user.first_name;
+        statusEl.innerText = `Hello, ${data.user.first_name}`;
     } else {
-        document.getElementById("status").innerText =
-            "Auth error: " + data.error;
+        statusEl.innerText = `Auth error: ${data.error}`;
     }
 }
 

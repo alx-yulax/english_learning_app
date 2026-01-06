@@ -1,9 +1,12 @@
 from flask import Blueprint, request, jsonify
 
+from app.core.config import get_settings
 from app.core.security import verify_telegram_webapp
 from app.services.words import WordsService
 
-words_bp = Blueprint("words", __name__)
+settings = get_settings()
+
+words_bp = Blueprint("words", __name__, url_prefix="/webapp")
 
 
 @words_bp.route("/words", methods=["GET"])
@@ -17,7 +20,7 @@ def get_words():
         return jsonify({"error": "Missing initData"}), 401
 
     try:
-        data = verify_telegram_webapp(init_data)
+        data = verify_telegram_webapp(init_data, bot_token=settings.BOT_TOKEN)
     except ValueError as e:
         return jsonify({"error": str(e)}), 403
 
